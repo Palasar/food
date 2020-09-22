@@ -9,13 +9,18 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/preset-env": "^7.11.5",
     "browser-sync": "^2.26.12",
+    "core-js": "^3.6.5",
     "gulp": "^4.0.2",
     "gulp-autoprefixer": "^6.1.0",
     "gulp-clean-css": "^4.3.0",
     "gulp-cli": "^2.3.0",
     "gulp-htmlmin": "^5.0.1",
     "gulp-imagemin": "^6.2.0",
+    "gulp-json-srv": "^1.2.0",
     "gulp-rename": "^1.4.0",
     "gulp-sass": "^4.1.0",
     "json-server": "^0.16.1",
@@ -27,5 +32,11 @@
     "> 1%",
     "maintained node versions",
     "not dead"
-  ]
+  ],
+  "dependencies": {
+    "@babel/polyfill": "^7.11.5",
+    "babel-loader": "^8.1.0",
+    "es6-promise": "^4.2.8",
+    "nodelist-foreach-polyfill": "^1.2.0"
+  }
 }
