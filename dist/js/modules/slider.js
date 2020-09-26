@@ -1,90 +1,153 @@
+// import { set } from "core-js/fn/dict";
+
+// import { of } from "core-js/fn/array";
+
 function slider({container, slide, nextArrow, prevArrow, totalCounter, currentCounter, wrapper, field}) {
-    const allSlide = document.querySelectorAll(slide),
+    const
         togglePrev = document.querySelector(prevArrow),
         toggleNext = document.querySelector(nextArrow),
         totlalCounter = document.querySelector(totalCounter),
         currentCounterr =  document.querySelector( currentCounter),
         sliderWrapper = document.querySelector(wrapper),
-        sliderField = document.querySelector(field);
-    const    widthWrapper = window.getComputedStyle(sliderWrapper).width;
-
-    let counterSlider = 1,
-        offset = 0;
-
-    const slidee = document.querySelector(container),
+        sliderField = document.querySelector(field),
+        widthWrapper = window.getComputedStyle(sliderWrapper).width,
+        containerForSlide = document.querySelector(container),
         dotsWrapper = document.createElement('div'),
         dot = document.createElement('div');
         
-        dotsWrapper.classList.add('carousel-indicators');
+
+    let  allSlide = document.querySelectorAll(slide),
+         lastSlide = allSlide[allSlide.length - 1],
+         firstSlide = allSlide[0],
+         cloneLastSlide = lastSlide.cloneNode(true),
+         cloneFirstSlide = firstSlide.cloneNode(true),
+          counterSlider = 1,
+          index = 1,
+          offset = deliteNotDigit(widthWrapper),
+          allowShift = true;
+   
+     dotsWrapper.classList.add('carousel-indicators');
         
     for(let i = 1; i <= allSlide.length; i++) {
         dotsWrapper.innerHTML += `<div data-dot = '${i}' class = 'dot'></div>`; 
     }
-
-    slidee.append(dotsWrapper);
+    
+    containerForSlide.append(dotsWrapper);
 
     const dots = document.querySelectorAll('.dot');
+
+    
+
+    sliderField.append(cloneFirstSlide);
+    sliderField.prepend(cloneLastSlide);
+
+    allSlide = document.querySelectorAll(slide);
+
+    allSlide.forEach(slide => slide.style.width = widthWrapper);
+
+   
 
     sliderField.style.cssText = `
             width:  ${100 * allSlide.length}%;
             display: flex;
-            transition: 0.7s all;
-    ` ;
+    `;
 
-    allSlide.forEach(slidee => slidee.style.width = widthWrapper);
+   
 
     sliderWrapper.style.overflow = 'hidden';
 
+
+
     if(allSlide.length < 10) {
-        totlalCounter.textContent = `0${allSlide.length}`;
+        totlalCounter.textContent = `0${allSlide.length - 2}`;
     }else{
-        totlalCounter.textContent = allSlide.length;
+        totlalCounter.textContent = allSlide.length - 2;
     }
 
-    function toggleSlide (n = 0) {
+    currentCounterr.textContent = `0${counterSlider}`;
+    sliderField.style.transform = `translateX(-${offset}px)`;
+    document.querySelector(`[data-dot = '${counterSlider}' ]`).classList.add('activeDot');  
 
-        dots.forEach(dot => dot.classList.remove('activeDot'));
+    function toggleSlide () {
+      
+            sliderField.classList.add('shiftSlide');
+            sliderField.style.transform = `translateX(-${offset}px)`;
+       
+      
+        
+    }
 
-        sliderField.style.transform = `translateX(-${offset}px)`;
     
-        counterSlider += n;
-
-        if(counterSlider < 10) {
-            currentCounterr.textContent = `0${counterSlider}`;
-        }else{
-            currentCounterr.textContent = counterSlider; 
-        }
-
-        document.querySelector(`[data-dot = '${counterSlider}' ]`).classList.add('activeDot');   
-    }
-
-    toggleSlide();
-
     function deliteNotDigit(str){
         return Math.round(+str.replace(/[A-Za-z]/g, '')) ;
     }
+                                  
+    sliderField.addEventListener('transitionend', () => {
 
-    toggleNext.addEventListener('click', () => {
-        if(offset == deliteNotDigit(widthWrapper) * ( allSlide.length - 1)) {
-            offset = 0;
-            counterSlider = 0;
+        sliderField.classList.remove('shiftSlide');
+
+        if(index == allSlide.length - 1){
+             index = 1;
+             offset = deliteNotDigit(widthWrapper);
+             sliderField.style.transform = `translateX(-${offset}px)`;
+             
+
+        }else if(index == 0){
+            index = allSlide.length - 2;
+            offset = deliteNotDigit(widthWrapper) * (allSlide.length - 2);
+           
             
-        }else{
-            offset += deliteNotDigit(widthWrapper);
+           sliderField.style.transform = `translateX(-${offset}px)`;
         }
 
-        toggleSlide (1);
+        allowShift = true;
     });
 
-    togglePrev.addEventListener('click', () => {
-            if(offset == 0) {
-                offset = deliteNotDigit(widthWrapper) * ( allSlide.length - 1);
-                counterSlider = allSlide.length + 1;
-            }else{
-                offset -= deliteNotDigit(widthWrapper);
-            }
+    toggleNext.addEventListener('click', () => {
+       if(allowShift){
+        ++index;
+        offset += deliteNotDigit(widthWrapper);
 
-            toggleSlide (-1);
+        ++counterSlider;
+        
+        if(counterSlider == allSlide.length - 1 ){
+             counterSlider = 1;
+             currentCounterr.textContent = counterSlider;
+        }else{
+            currentCounterr.textContent = counterSlider;  
+        }
+        if(counterSlider < 10) {
+            currentCounterr.textContent = `0${counterSlider}`;
+        }
+        toggleSlide ();
+        dots.forEach(dot => dot.classList.remove('activeDot'));
+        document.querySelector(`[data-dot = '${counterSlider}' ]`).classList.add('activeDot'); 
+
+        allowShift = false;
+       }
+    });
+
+    togglePrev.addEventListener('click', () => {   
+     if(allowShift){
+        --index; 
+        offset -= deliteNotDigit(widthWrapper);
+        
+        --counterSlider;
+        
+        if(counterSlider == 0){
+            counterSlider = allSlide.length - 2;
+            currentCounterr.textContent = counterSlider;
+        }else{
+            currentCounterr.textContent = counterSlider; 
+        }
+        if(counterSlider < 10) {
+            currentCounterr.textContent = `0${counterSlider}`;
+        }
+        toggleSlide ();
+        dots.forEach(dot => dot.classList.remove('activeDot'));
+        document.querySelector(`[data-dot = '${counterSlider}' ]`).classList.add('activeDot');
+     }
+     allowShift = false;
     });
 
     dots.forEach(dot => {
