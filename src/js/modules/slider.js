@@ -90,14 +90,11 @@ function slider({container, slide, nextArrow, prevArrow, totalCounter, currentCo
              index = 1;
              offset = deliteNotDigit(widthWrapper);
              sliderField.style.transform = `translateX(-${offset}px)`;
-             
-
+       
         }else if(index == 0){
             index = allSlide.length - 2;
             offset = deliteNotDigit(widthWrapper) * (allSlide.length - 2);
-           
-            
-           sliderField.style.transform = `translateX(-${offset}px)`;
+            sliderField.style.transform = `translateX(-${offset}px)`;
         }
 
         allowShift = true;
